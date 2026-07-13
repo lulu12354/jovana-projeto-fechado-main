@@ -1,1 +1,96 @@
-(function(){"use strict";const c={url:"https://cli-04-jovana-guimarases.frontlabstudio.workers.dev",cooldownHoras:1,timeoutMs:1200};document.addEventListener("click",async function(e){const t=e.target.closest('[data-track="true"]');if(!t)return;const a=t.getAttribute("data-coluna");const r=t.getAttribute("href");const n=t.getAttribute("target")==="_blank";if(!a)return;const s=e.ctrlKey||e.shiftKey||e.metaKey||e.button===1||n;const o=r&&r!=="#"&&!r.startsWith("javascript:");if(!s&&o){e.preventDefault();}const i=()=>{if(!s&&o){window.location.href=r;}};const l=c.cooldownHoras*60*60*1000;const u=`fl_track_${a}`;let d=0;try{const v=localStorage.getItem(u);d=v?parseInt(v,10):0;if(isNaN(d))d=0;}catch(x){}const f=Date.now();if(f-d<l){i();return;}try{localStorage.setItem(u,f.toString());const p=JSON.stringify({[a]:1});const m=fetch(c.url,{method:"POST",headers:{"Content-Type":"application/json"},body:p,keepalive:true});const w=new Promise((_,y)=>setTimeout(()=>y(new Error("T")),c.timeoutMs));await Promise.race([m,w]);}catch(g){}finally{i();}});})();
+(function () {
+  "use strict";
+
+  const CONFIG = {
+    url: "https://cli-04-jovana-guimarases.frontlabstudio.workers.dev",
+    cooldownHoras: 1,
+    timeoutMs: 1200,
+  };
+
+  // Marca quando a página terminou de carregar
+  const pageLoadTime = Date.now();
+
+  // Função para pegar as UTMs da URL
+  const getUTMs = () => {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      utm_source: params.get("utm_source") || "organico",
+      utm_medium: params.get("utm_medium") || "none",
+      utm_campaign: params.get("utm_campaign") || "none"
+    };
+  };
+
+  document.addEventListener("click", async function (e) {
+    const target = e.target.closest('[data-track="true"]');
+    if (!target) return;
+
+    const coluna = target.getAttribute("data-coluna");
+    const href = target.getAttribute("href");
+    const isBlank = target.getAttribute("target") === "_blank";
+
+    if (!coluna) return;
+
+    const isModifiedEvent = e.ctrlKey || e.shiftKey || e.metaKey || e.button === 1 || isBlank;
+    const ehLinkValido = href && href !== "#" && !href.startsWith("javascript:");
+
+    if (!isModifiedEvent && ehLinkValido) {
+      e.preventDefault();
+    }
+
+    const liberarNavegacao = () => {
+      if (!isModifiedEvent && ehLinkValido) {
+        window.location.href = href;
+      }
+    };
+
+    const tempoBloqueioMs = CONFIG.cooldownHoras * 60 * 60 * 1000;
+    const storageKey = `fl_track_${coluna}`;
+    let lastClick = 0;
+
+    try {
+      lastClick = parseInt(localStorage.getItem(storageKey), 10) || 0;
+    } catch (error) {
+      console.warn("[Tracker] Erro local.");
+    }
+
+    const now = Date.now();
+    if (now - lastClick < tempoBloqueioMs) {
+      liberarNavegacao();
+      return;
+    }
+
+    try {
+      localStorage.setItem(storageKey, now.toString());
+      
+      const utms = getUTMs();
+      
+      // MONTANDO O NOVO PACOTE DE DADOS RICOS
+      const payload = JSON.stringify({ 
+        [coluna]: 1,
+        ...utms,
+        device: /Mobile|Android|iP(ad|hone)/i.test(navigator.userAgent) ? "Mobile" : "Desktop",
+        referrer: document.referrer || "direto",
+        page: window.location.pathname,
+        time_on_page_sec: Math.round((now - pageLoadTime) / 1000)
+      });
+
+      const fetchPromise = fetch(CONFIG.url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+        keepalive: true,
+      }).catch(() => null); // Silencia erros de rede para não sujar o console
+
+      const timeoutPromise = new Promise((resolve) =>
+        setTimeout(() => resolve(null), CONFIG.timeoutMs) // Resolve null em vez de Error
+      );
+
+      await Promise.race([fetchPromise, timeoutPromise]);
+      
+    } catch (err) {
+      // Falha silenciosa total
+    } finally {
+      liberarNavegacao();
+    }
+  });
+})();
