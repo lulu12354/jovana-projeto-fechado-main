@@ -5,12 +5,12 @@
     url: "https://cli-04-jovana-guimarases.frontlabstudio.workers.dev",
     cooldownHoras: 1,
     timeoutMs: 1200,
-    heartbeatIntervalMs: 30000, // Pulso a cada 30 segundos
+    // [MODIFICADO]: Pulso alterado para 5 minutos (300.000 ms) para economizar 90% do banco
+    heartbeatIntervalMs: 300000, 
   };
 
   const pageLoadTime = Date.now();
 
-  // NOVO: Gerenciamento de Sessão (Identidade Única)
   const getSessionId = () => {
     let sid = sessionStorage.getItem("fl_session_id");
     if (!sid) {
@@ -31,12 +31,11 @@
     };
   };
 
-  // Empacotador de dados (Mais limpo e reutilizável)
   const buildPayload = (coluna, eventType) => {
     return JSON.stringify({
       [coluna]: 1,
       event_type: eventType,
-      session_id: SESSION_ID, // Anexa a identidade em TUDO
+      session_id: SESSION_ID, 
       ...getUTMs(),
       device: /Mobile|Android|iP(ad|hone)/i.test(navigator.userAgent)
         ? "Mobile"
@@ -47,11 +46,7 @@
     });
   };
 
-  // ========================================================
-  // NOVO MOTOR: O BATIMENTO CARDÍACO (HEARTBEAT)
-  // ========================================================
   setInterval(() => {
-    // Só envia o pulso se o usuário estiver focado na página (aba ativa)
     if (document.visibilityState === "visible") {
       fetch(CONFIG.url, {
         method: "POST",
@@ -62,7 +57,6 @@
     }
   }, CONFIG.heartbeatIntervalMs);
 
-  // DISPARA O 'PAGE_VIEW' ASSIM QUE O SITE CARREGA
   window.addEventListener("load", () => {
     const storageKey = `fl_track_page_view`;
     const tempoBloqueioMs = CONFIG.cooldownHoras * 60 * 60 * 1000;
@@ -82,7 +76,6 @@
     } catch (e) {}
   });
 
-  // MANTÉM OS CLIQUES NOS BOTÕES INTACTOS
   document.addEventListener("click", async function (e) {
     const target = e.target.closest('[data-track="true"]');
     if (!target) return;
