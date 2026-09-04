@@ -70,4 +70,30 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    // --- Premium Cookie Banner Logic ---
+    const cookieBanner = document.getElementById('premium-cookie-banner');
+    const btnAccept = document.getElementById('btn-accept-cookie');
+    const btnRefuse = document.getElementById('btn-refuse-cookie');
+
+    if (cookieBanner && btnAccept && btnRefuse) {
+        // Verifica se o usuário já respondeu
+        const cookieConsent = localStorage.getItem('jovana_cookie_consent');
+
+        if (!cookieConsent) {
+            // Animação de entrada suave após 1.5 segundos
+            setTimeout(() => {
+                cookieBanner.classList.add('show');
+            }, 1500);
+        }
+
+        // Função para ocultar com estilo e salvar a escolha
+        const closeBanner = (choice) => {
+            localStorage.setItem('jovana_cookie_consent', choice);
+            cookieBanner.classList.remove('show');
+        };
+
+        btnAccept.addEventListener('click', () => closeBanner('accepted'));
+        btnRefuse.addEventListener('click', () => closeBanner('refused'));
+    }
 });

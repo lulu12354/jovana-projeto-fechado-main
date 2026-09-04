@@ -663,3 +663,242 @@ a.bento-card .card-action {
         text-align: center;
     }
 }
+
+/* ==========================================================================
+   Premium Cookie Banner (Glassmorphism)
+   ========================================================================== */
+.cookie-glass-card {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--cor-border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    color: var(--cor-texto);
+    width: calc(100% - 60px);
+    max-width: 420px;
+    font-family: var(--fonte-padrao);
+}
+
+.cookie-glass-card.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.cookie-content h4 {
+    margin: 0 0 6px 0;
+    font-size: 1.2rem;
+    font-family: var(--fonte-titulo);
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    color: var(--cor-destaque);
+}
+
+.cookie-content p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0.8;
+}
+
+.cookie-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.cookie-btn {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: var(--fonte-padrao);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.cookie-btn.accept {
+    background: var(--cor-destaque);
+    color: var(--cor-fundo);
+}
+
+.cookie-btn.accept:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.cookie-btn.refuse {
+    background: transparent;
+    color: var(--cor-texto);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cookie-btn.refuse:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Breakpoints / Responsividade (Premium Cookie Banner) --- */
+
+/* Laptops / Desktop Menor (até 1024px) */
+@media (max-width: 1024px) {
+    .cookie-glass-card {
+        max-width: 400px;
+        bottom: 24px;
+        left: 24px;
+        padding: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    .cookie-content h4 {
+        font-size: 1.1rem;
+    }
+    .cookie-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+
+/* Tablets (até 768px) */
+@media (max-width: 768px) {
+    .cookie-glass-card {
+        flex-direction: column;
+        align-items: flex-start;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        max-width: calc(100% - 40px);
+        gap: 20px;
+        padding: 20px;
+    }
+    .cookie-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+/* Mobile Menor (400px a 320px) */
+@media (max-width: 400px) {
+    .cookie-glass-card {
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        max-width: calc(100% - 32px);
+        padding: 16px;
+        border-radius: 12px;
+    }
+    .cookie-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+    .cookie-btn {
+        width: 100%;
+        text-align: center;
+        padding: 14px;
+    }
+}
+
+/* =======================================================
+   ESTILOS DA ASSINATURA FRONTLAB
+   ======================================================= */
+.frontlab-credit-wrapper {
+    /* Controle de Cores otimizado para o tema escuro */
+    --fl-text-base: rgba(255, 255, 255, 0.6);  
+    --fl-text-hover: #FFFFFF;    
+    --fl-accent: #D4AF37;        
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+    
+    font-family: var(--fonte-padrao);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--fl-text-base);
+    line-height: 1;
+}
+
+.fl-label {
+    opacity: 0.7;
+}
+
+.fl-signature {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--fl-text-base);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.4s ease;
+    padding-bottom: 3px;
+}
+
+/* A Linha de Luxo que cresce no Hover */
+.fl-signature::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 1px;
+    background: var(--fl-accent);
+    transition: width 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.fl-signature:hover {
+    color: var(--fl-text-hover);
+}
+
+.fl-signature:hover::after {
+    width: 100%;
+}
+
+/* O Ponto de Luz Pulsante (Assinatura Visual) */
+.fl-dot {
+    width: 5px;
+    height: 5px;
+    background-color: var(--fl-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    animation: fl-pulse 2.5s infinite ease-in-out;
+}
+
+/* A Animação do Ponto Isolada */
+@keyframes fl-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* Tratamento para o Mobile no site do cliente */
+@media (max-width: 480px) {
+    .frontlab-credit-wrapper {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+}
